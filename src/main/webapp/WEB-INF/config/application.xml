@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/mvc
+          https://www.springframework.org/schema/mvc/spring-mvc.xsd
+           http://www.springframework.org/schema/context
+            https://www.springframework.org/schema/context/spring-context.xsd
+             http://www.springframework.org/schema/jdbc
+              http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+               http://www.springframework.org/schema/tx
+                http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <mvc:annotation-driven />
+    <context:component-scan base-package="org.itstep"/>
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="suffix" value=".jsp" />
+        <property name="prefix" value="/WEB-INF/view/" />
+    </bean>
+
+    <jdbc:embedded-database type="H2" id="h2DataSource"/>
+    <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          id="mariaDbDataSource">
+        <property name="username" value="root"/>
+        <property name="password" value="password"/>
+        <property name="url" value="jdbc:mariadb://localhost:3306/books_lib"/>
+    </bean>
+
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="h2DataSource" />
+        <property name="packagesToScan" value="org.itstep" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.format_sql" value="true" />
+            </map>
+        </property>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="generateDdl" value="true" />
+                <property name="showSql" value="true" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+<!--    <bean class="org.itstep.dao.BookDaoImpl" id="bookDaoImpl">-->
+<!--    </bean>-->
+<!--    <bean class="org.itstep.service.BookService" id="bookService">-->
+<!--        <property name="BookDao" ref="bookDaoImpl"/>-->
+<!--    </bean>-->
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <mvc:resources mapping="/static/**" location="/resources/"/>
+
+</beans>
