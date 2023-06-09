@@ -30,8 +30,10 @@ public class Book {
         this.pages = pages;
         this.authors = authors;
         this.publishers = publishers;
-        authors.stream().forEach(author -> author.addBook(this));
-        publishers.stream().forEach(publisher -> publisher.addPublisher(this));
+        authors.stream().forEach(author -> author.getBooks().add(this));
+        publishers.stream().forEach(publisher -> publisher.getBooks().add(this));
+//        authors.stream().forEach(author -> author.addBook(this));
+//        publishers.stream().forEach(publisher -> publisher.addPublisher(this));
     }
 
     public int getId() {

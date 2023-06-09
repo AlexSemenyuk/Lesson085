@@ -86,44 +86,41 @@ public class BookDaoImpl {
         Book book = entityManager.find(Book.class, id);
         if (book != null) {
             System.out.println("book before DELETE" + book.toString());
-//            book.setAuthors(new ArrayList<>());
-//            book.setPublishers(new ArrayList<>());
-//            book.getAuthors().forEach(a -> entityManager.merge(a));
-//            book.getPublishers().forEach(p -> entityManager.merge(p));
-//            entityManager.merge(book.getAuthors());
-//            entityManager.merge(book.getPublishers());
-//            entityManager.merge(book);        // не работает
-//            System.out.println("Delete book.toString() = " + book.toString());
-//            String delete = "DELETE FROM Book b WHERE b.BOOK_ID  = %s;".formatted(id);
-//            System.out.println("delete = " + delete);
-//            entityManager.createQuery(delete);
-            entityManager.remove(id);
+            entityManager.remove(book);
         } else {
             System.out.println("Delete Book impl: id = null");
         }
     }
 
     @Transactional
-    public void deleteDataInAuthorBookTable(int id) {
-        String delete = "DELETE FROM AuthorBook ab WHERE ab.BOOK_ID  = %s;".formatted(id);
-        System.out.println("delete = " + delete);
-//        Query nativeQuery =
-//            entityManager.createNativeQuery(delete);
-        entityManager.createQuery(delete);
-//          entityManager.createNativeQuery();
-//        List<Category> resultList = nativeQuery.getResultList();
-//        resultList.stream().forEach(System.out::println);
+    public void deleteBookInAuthor(int id) {
+        List<Author> authors = findAllAuthors();
+        for (Author a : authors) {
+            List<Book> booksOfAuthor = a.getBooks();
+            if (booksOfAuthor != null) {
+                for (Book b : booksOfAuthor) {
+                    if (b.getId() == id) {
+                        booksOfAuthor.remove(b);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Transactional
-    public void deleteDataInPublisherBookTable(int id) {
-        String delete = "DELETE FROM PUBLISHER_BOOK pb WHERE pb.BOOK_ID  = %s;".formatted(id);
-        System.out.println("delete = " + delete);
-        entityManager.createQuery(delete);
-//        Query nativeQuery =
-//        entityManager.createNativeQuery(delete);
-//        List<Category> resultList = nativeQuery.getResultList();
-//        resultList.stream().forEach(System.out::println);
+    public void deleteBookInPublisher(int id) {
+        List<Publisher> publishers = findAllPublisers();
+        for (Publisher p : publishers) {
+            List<Book> booksOfPublisher = p.getBooks();
+            for (Book b : booksOfPublisher) {
+                if (b.getId() == id) {
+                    booksOfPublisher.remove(b);
+                    break;
+                }
+
+            }
+        }
     }
 
     @Transactional

@@ -171,8 +171,8 @@ public class BookService {
     }
 
     public void deleteBook(int id) {
-//        bookDaoImpl.deleteDataInAuthorBookTable(id);
-//        bookDaoImpl.deleteDataInPublisherBookTable(id);
+        bookDaoImpl.deleteBookInAuthor(id);
+        bookDaoImpl.deleteBookInPublisher(id);
         bookDaoImpl.deleteBook(id);
         System.out.println("After Book delete");
     }
